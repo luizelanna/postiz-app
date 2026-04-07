@@ -19,7 +19,7 @@ import { ResendActivationDto } from '@gitroom/nestjs-libraries/dtos/auth/resend-
 import { ApiTags } from '@nestjs/swagger';
 import { getCookieUrlFromDomain } from '@gitroom/helpers/subdomain/subdomain.management';
 import { EmailService } from '@gitroom/nestjs-libraries/services/email.service';
-import { RealIP } from 'nestjs-real-ip';
+import { RealIP, Headers } from 'nestjs-real-ip';
 import { UserAgent } from '@gitroom/nestjs-libraries/user/user.agent';
 import { Provider } from '@prisma/client';
 import * as Sentry from '@sentry/nestjs';
@@ -45,9 +45,19 @@ export class AuthController {
     @Body() body: CreateOrgUserDto,
     @Res({ passthrough: false }) response: Response,
     @RealIP() ip: string,
-    @UserAgent() userAgent: string
+    @UserAgent() userAgent: string,
+    @Headers('x-registration-token') registrationToken: string,
   ) {
     try {
+      // If global registration is disabled, require a matching token
+      if (process.env.DISABLE_REGISTRATION === 'true') {
+        const expected = process.env.REGISTRATION_TOKEN || '';
+        if (!expected || registrationToken !== expected) {
+          response.status(403).json({ error: 'Registration is disabled' });
+          return;
+        }
+      }
+
       const getOrgFromCookie = this._authService.getOrgFromCookie(
         req?.cookies?.org
       );
