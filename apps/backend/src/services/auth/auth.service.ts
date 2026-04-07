@@ -21,15 +21,22 @@ export class AuthService {
     private _emailService: EmailService,
     private _providerManager: AuthProviderManager
   ) {}
-  async canRegister(provider: string) {
-    if (
-      process.env.DISABLE_REGISTRATION !== 'true' ||
-      provider === Provider.GENERIC
-    ) {
-      return true;
+  async canRegister(provider: string, token?: string) {
+    // When registration is globally disabled, allow only if a valid token is provided
+    if (process.env.DISABLE_REGISTRATION === 'true') {
+      const expected = process.env.REGISTRATION_TOKEN || '';
+      if (expected && token === expected) {
+        return true;
+      }
+      // Fallback: allow first organization creation when no orgs exist
+      return (await this._organizationService.getCount()) === 0;
     }
 
-    return (await this._organizationService.getCount()) === 0;
+    // Normal flow: registration allowed unless provider is restricted
+    if (provider === Provider.GENERIC) {
+      return true;
+    }
+    return true;
   }
 
   async routeAuth(
