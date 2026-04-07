@@ -8,13 +8,14 @@ services:
       MAIN_URL: 'http://localhost:4007'
       FRONTEND_URL: 'http://localhost:4007'
       NEXT_PUBLIC_BACKEND_URL: 'http://localhost:4007/api'
-      JWT_SECRET: 'random string that is unique to every install - just type random characters here!'
+      JWT_SECRET: '3b8f2c9e7u1a4d6g9m2q5x8z1k4n7r0v3y6b9e2h5k8n1q4t7w0z3c6f9i2l5o8r'
       DATABASE_URL: 'postgresql://postiz-user:postiz-password@postiz-postgres:5432/postiz-db-local'
       REDIS_URL: 'redis://postiz-redis:6379'
-      BACKEND_INTERNAL_URL: 'http://localhost:3000'
+      BACKEND_INTERNAL_URL: 'http://localhost:5000'
       TEMPORAL_ADDRESS: "temporal:7233"
       IS_GENERAL: 'true'
       DISABLE_REGISTRATION: 'false'
+      REGISTRATION_TOKEN: '1234567890'
 
       # === Storage Settings
       STORAGE_PROVIDER: 'local'
@@ -266,3 +267,16 @@ networks:
   temporal-network:
     driver: bridge
     name: temporal-network
+
+
+
+# curl -X POST http://localhost:4007/api/auth/register \
+#   -H "Content-Type: application/json" \
+#   -H "X-Registration-Token: seu-token-secreto" \
+#   -d '{
+#         "provider": "LOCAL",
+#         "email": "novo@exemplo.com",
+#         "password": "SenhaForte123!",
+#         "name": "Novo Usuário",
+#         "company": "MinhaEmpresa"
+#       }' -i
