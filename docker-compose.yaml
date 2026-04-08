@@ -1,6 +1,6 @@
 services:
   postiz:
-    image: ghcr.io/gitroomhq/postiz-app:latest
+    image: appregistry.io2.com.br/postiz:latest
     container_name: postiz
     restart: always
     environment:
@@ -280,3 +280,14 @@ networks:
 #         "name": "Novo Usuário",
 #         "company": "MinhaEmpresa"
 #       }' -i
+
+
+
+# docker compose up -d
+# docker compose down
+
+# docker build --no-cache -t appregistry.io2.com.br/postiz:latest -f Dockerfile.dev .
+
+# docker rmi appregistry.io2.com.br/postiz:latest
+# docker build --no-cache -t appregistry.io2.com.br/postiz:latest -f Dockerfile.dev .
+# docker push appregistry.io2.com.br/postiz:latest

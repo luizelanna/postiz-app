@@ -1,0 +1,7 @@
+{
+  "provider": "LOCAL",
+  "email": "test@exemplo.com",
+  "password": "SenhaForte123!",
+  "name": "Test User",
+  "company": "Test Company"
+}
