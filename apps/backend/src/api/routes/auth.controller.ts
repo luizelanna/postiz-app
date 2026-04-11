@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -49,13 +50,13 @@ export class AuthController {
     @Headers('x-registration-token') registrationToken: string,
   ) {
     try {
-      // If global registration is disabled, require a matching token
-      if (process.env.DISABLE_REGISTRATION === 'true') {
-        const expected = process.env.REGISTRATION_TOKEN || '';
-        if (!expected || registrationToken !== expected) {
-          response.status(403).json({ error: 'Registration is disabled' });
-          return;
-        }
+      const allowed = await this._authService.canRegister(
+        body.provider,
+        registrationToken
+      );
+      if (!allowed) {
+        response.status(403).json({ error: 'Registration is disabled' });
+        return;
       }
 
       const getOrgFromCookie = this._authService.getOrgFromCookie(
@@ -67,7 +68,8 @@ export class AuthController {
         body,
         ip,
         userAgent,
-        getOrgFromCookie
+        getOrgFromCookie,
+        registrationToken
       );
 
       const activationRequired =
